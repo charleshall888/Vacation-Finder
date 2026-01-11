@@ -68,10 +68,26 @@ DATA FLOW:
 |-------|------------|--------|
 | Backend | Python 3.14 + FastAPI | ✅ Session 1 |
 | Database | SQLAlchemy + SQLite | ✅ Session 1 |
-| Scrapers | httpx + BeautifulSoup | ⬜ Session 2 |
-| Frontend | Vue 3 + Vite + TypeScript | ⬜ Session 3 |
-| State | Pinia | ⬜ Session 3 |
-| Styling | Tailwind CSS | ⬜ Session 3 |
+| Frontend | Vue 3 + Vite + TypeScript | ⬜ Session 2 |
+| State | Pinia | ⬜ Session 2 |
+| Styling | Tailwind CSS | ⬜ Session 2 |
+
+## Data Strategy: Claude-Assisted
+
+Instead of fragile web scrapers, **Claude fetches property data**:
+
+```
+User: "Search for beach houses in Destin FL and add them"
+  ↓
+Claude: Uses WebSearch to find Airbnb/VRBO listings
+  ↓
+Claude: Extracts data and calls POST /api/properties
+  ↓
+Frontend: Displays properties with value scoring
+```
+
+**To add properties, ask Claude:**
+> "Search Airbnb for 8-bedroom beach houses in Destin, FL for June 13-20, under $15k, and add the top 5"
 
 ## Directory Structure
 
@@ -121,19 +137,17 @@ npm run dev
 
 ---
 
-## Session Progress
+## Session Progress (7 Sessions)
 
-| # | Session | Status | Prerequisite Check |
-|---|---------|--------|-------------------|
+| # | Session | Status | Prerequisite |
+|---|---------|--------|--------------|
 | 1 | Backend Foundation | ✅ | N/A |
-| 2 | Data Scraping | ⬜ | `curl localhost:8000/health` works |
-| 3 | Frontend Scaffolding | ⬜ | Session 1 complete |
-| 4 | Frontend-Backend Integration | ⬜ | Sessions 2+3 complete |
-| 5 | Scoring System | ⬜ | Session 4 complete |
-| 6 | Search Configuration UI | ⬜ | Session 5 complete |
-| 7 | VRBO Integration | ⬜ | Session 4 complete |
-| 8 | Vacasa + Local Agencies | ⬜ | Session 7 complete |
-| 9 | Polish & Error Handling | ⬜ | All previous complete |
+| 2 | Frontend Scaffolding | ⬜ | Backend exists |
+| 3 | Frontend-Backend Integration | ⬜ | Session 2 complete |
+| 4 | Scoring System | ⬜ | Session 3 complete |
+| 5 | Search Configuration UI | ⬜ | Session 4 complete |
+| 6 | Property Import Features | ⬜ | Session 3 complete |
+| 7 | Polish & Error Handling | ⬜ | All previous complete |
 
 **See full plan**: `.claude/plans/zippy-sleeping-bear.md`
 
