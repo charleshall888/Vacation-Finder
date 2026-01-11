@@ -1,0 +1,205 @@
+# Vacation Finder - Claude Project Guide
+
+> **START HERE**: This file is the entry point for every Claude session on this project.
+
+## Quick Start for New Sessions
+
+### 1. Check Current Status
+```bash
+# Run these to understand project state:
+ls -la backend/app/          # Backend structure exists?
+ls -la frontend/src/ 2>/dev/null || echo "Frontend not created yet"
+cat .claude/plans/zippy-sleeping-bear.md | head -100  # See session progress
+```
+
+### 2. Find Next Session
+Look at the plan file for the first uncompleted session (marked with ⬜).
+
+### 3. User Commands
+- **"Start Session N"** - Begin working on Session N
+- **"Continue"** - Resume the last in-progress session
+- **"Status"** - Show what's complete and what's next
+
+---
+
+## Project Overview
+
+A vacation rental aggregator that searches Airbnb, VRBO, Vacasa, and local agencies for beach house rentals, displaying them in a comparable card UI with weighted scoring.
+
+**Use Case**: Find 7-9 bedroom beach houses within 7 hours of Athens, GA for a family reunion in June 2026.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         USER                                 │
+│                          │                                   │
+│                          ▼                                   │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │                 Vue 3 Frontend                        │   │
+│  │   PropertyCards │ ComparisonGrid │ ScoreSliders      │   │
+│  └─────────────────────────┬───────────────────────────┘   │
+│                            │ HTTP                           │
+│                            ▼                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              FastAPI Backend                          │   │
+│  │   /api/properties │ /api/search │ /api/config        │   │
+│  └─────────────────────────┬───────────────────────────┘   │
+│                            │                                 │
+│              ┌─────────────┴─────────────┐                  │
+│              ▼                           ▼                   │
+│  ┌───────────────────┐       ┌───────────────────┐         │
+│  │   SQLite Cache    │       │     Scrapers      │         │
+│  │   (properties)    │       │ Airbnb│VRBO│etc   │         │
+│  └───────────────────┘       └───────────────────┘         │
+└─────────────────────────────────────────────────────────────┘
+
+DATA FLOW:
+1. User clicks "Refresh" in frontend
+2. Backend scrapers fetch from rental sites
+3. Results normalized to Property model
+4. Stored in SQLite cache
+5. Frontend displays with scoring
+```
+
+## Tech Stack
+
+| Layer | Technology | Status |
+|-------|------------|--------|
+| Backend | Python 3.14 + FastAPI | ✅ Session 1 |
+| Database | SQLAlchemy + SQLite | ✅ Session 1 |
+| Scrapers | httpx + BeautifulSoup | ⬜ Session 2 |
+| Frontend | Vue 3 + Vite + TypeScript | ⬜ Session 3 |
+| State | Pinia | ⬜ Session 3 |
+| Styling | Tailwind CSS | ⬜ Session 3 |
+
+## Directory Structure
+
+```
+Vacation-Finder/
+├── CLAUDE.md              # THIS FILE - read first every session
+├── SPECIFICATION.md       # Detailed requirements
+├── .claude/plans/         # Session tracking
+│   └── zippy-sleeping-bear.md
+├── backend/               # ✅ Created in Session 1
+│   ├── venv/              # Python virtual environment
+│   ├── requirements.txt
+│   ├── app/
+│   │   ├── main.py        # FastAPI entry point
+│   │   ├── config.py      # Settings
+│   │   ├── database.py    # Async SQLite
+│   │   ├── models/        # SQLAlchemy models
+│   │   ├── schemas/       # Pydantic schemas
+│   │   ├── api/routes/    # Endpoints
+│   │   ├── services/      # Business logic
+│   │   └── scrapers/      # Data fetchers
+│   └── tests/
+└── frontend/              # ⬜ Created in Session 3
+    └── src/
+        ├── components/
+        ├── views/
+        ├── stores/
+        └── services/
+```
+
+## Running the Project
+
+### Backend (after Session 1)
+```bash
+cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+# Test: curl http://localhost:8000/health
+```
+
+### Frontend (after Session 3)
+```bash
+cd frontend
+npm run dev
+# Opens: http://localhost:5173
+```
+
+---
+
+## Session Progress
+
+| # | Session | Status | Prerequisite Check |
+|---|---------|--------|-------------------|
+| 1 | Backend Foundation | ✅ | N/A |
+| 2 | Data Scraping | ⬜ | `curl localhost:8000/health` works |
+| 3 | Frontend Scaffolding | ⬜ | Session 1 complete |
+| 4 | Frontend-Backend Integration | ⬜ | Sessions 2+3 complete |
+| 5 | Scoring System | ⬜ | Session 4 complete |
+| 6 | Search Configuration UI | ⬜ | Session 5 complete |
+| 7 | VRBO Integration | ⬜ | Session 4 complete |
+| 8 | Vacasa + Local Agencies | ⬜ | Session 7 complete |
+| 9 | Polish & Error Handling | ⬜ | All previous complete |
+
+**See full plan**: `.claude/plans/zippy-sleeping-bear.md`
+
+---
+
+## Key Models
+
+### Property (backend/app/models/property.py)
+```python
+id: str              # "airbnb_12345"
+source: str          # airbnb, vrbo, vacasa, local
+name: str
+url: str
+bedrooms: int
+bathrooms: float
+price_per_week: float
+total_price: float   # includes fees
+review_score: float  # 0-5
+beach_walk_minutes: int
+amenities: dict      # {has_full_kitchen, parking_spots, has_pool...}
+value_score: float   # computed ranking
+```
+
+### SearchConfig (backend/app/models/search_config.py)
+```python
+origin_city: str     # "Athens"
+origin_state: str    # "GA"
+max_distance_miles: int
+min_bedrooms: int
+max_bedrooms: int
+max_price_per_week: float
+date_start: date
+date_end: date
+max_beach_walk_minutes: int
+required_amenities: list[str]
+scoring_weights: dict
+```
+
+## Default Search Criteria
+
+- **Origin**: Athens, GA
+- **Distance**: 400 miles (~7 hour drive)
+- **Bedrooms**: 7-9
+- **Guests**: 12-16 people
+- **Budget**: $15,000/week
+- **Beach**: < 10 min walk
+- **Required**: Full kitchen, 3+ parking spots
+- **Dates**: June 13-20, 2026 OR June 27-July 4, 2026
+
+## Scoring Weights (User Adjustable)
+
+| Factor | Default | Calculation |
+|--------|---------|-------------|
+| Price | 30% | Lower = better |
+| Reviews | 25% | score × log(count+1) |
+| Beach | 20% | Closer = better |
+| Amenities | 15% | Pool, hot tub bonuses |
+| Distance | 10% | Closer to origin = better |
+
+---
+
+## Code Conventions
+
+- Async/await for all database operations
+- Pydantic for request/response validation
+- Type hints on all functions
+- Source field identifies data origin
+- Properties without reviews from Airbnb/VRBO are excluded
+- Local agency properties: verified=False
