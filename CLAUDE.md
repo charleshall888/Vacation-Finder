@@ -9,11 +9,14 @@
 # Run these to understand project state:
 ls -la backend/app/          # Backend structure exists?
 ls -la frontend/src/ 2>/dev/null || echo "Frontend not created yet"
-cat .claude/plans/zippy-sleeping-bear.md | head -100  # See session progress
 ```
 
-### 2. Find Next Session
-Look at the plan file for the first uncompleted session (marked with ⬜).
+### 2. Read the Plan
+The full implementation plan is at **`.claude/plans/plan.md`** - read it to see:
+- Which sessions are complete (✅) vs pending (⬜)
+- Prerequisite checks for each session
+- Exact files to create/modify
+- Verification steps
 
 ### 3. User Commands
 - **"Start Session N"** - Begin working on Session N
@@ -103,7 +106,7 @@ Vacation-Finder/
 ├── CLAUDE.md              # THIS FILE - read first every session
 ├── SPECIFICATION.md       # Detailed requirements
 ├── .claude/plans/         # Session tracking
-│   └── zippy-sleeping-bear.md
+│   └── plan.md
 ├── backend/               # ✅ Created in Session 1
 │   ├── venv/              # Python virtual environment
 │   ├── requirements.txt
@@ -156,7 +159,7 @@ npm run dev
 | 6 | Property Import Features | ⬜ | Session 3 complete |
 | 7 | Polish & Error Handling | ⬜ | All previous complete |
 
-**See full plan**: `.claude/plans/zippy-sleeping-bear.md`
+**See full plan**: `.claude/plans/plan.md`
 
 ---
 
