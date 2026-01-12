@@ -12,7 +12,7 @@ ls -la frontend/src/ 2>/dev/null || echo "Frontend not created yet"
 ```
 
 ### 2. Read the Plan
-The full implementation plan is at **`.claude/plans/plan.md`** - read it to see:
+The full implementation plan is at **`PLAN.md`** - read it to see:
 - Which sessions are complete (✅) vs pending (⬜)
 - Prerequisite checks for each session
 - Exact files to create/modify
@@ -159,7 +159,7 @@ npm run dev
 | 6 | Property Import Features | ⬜ | Session 3 complete |
 | 7 | Polish & Error Handling | ⬜ | All previous complete |
 
-**See full plan**: `.claude/plans/plan.md`
+**See full plan**: `PLAN.md`
 
 ---
 
