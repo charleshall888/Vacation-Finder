@@ -72,19 +72,26 @@ DATA FLOW:
 | State | Pinia | ⬜ Session 2 |
 | Styling | Tailwind CSS | ⬜ Session 2 |
 
-## Data Strategy: Claude-Assisted
+## Data Strategy: Claude + Perplexity Search
 
-Instead of fragile web scrapers, **Claude fetches property data**:
+Instead of fragile web scrapers, **Claude fetches property data using Perplexity**:
 
 ```
 User: "Search for beach houses in Destin FL and add them"
   ↓
-Claude: Uses WebSearch to find Airbnb/VRBO listings
+Claude: perplexity_search → structured results with URLs
   ↓
-Claude: Extracts data and calls POST /api/properties
+Claude: Extracts data (name, price, bedrooms, URL)
+  ↓
+Claude: POST /api/properties for each property
   ↓
 Frontend: Displays properties with value scoring
 ```
+
+**Tools used:**
+- `perplexity_search` - Find listings (returns titles, URLs, snippets)
+- `perplexity_ask` - Follow-up questions about areas/properties
+- `WebFetch` - Get full details from a property URL if needed
 
 **To add properties, ask Claude:**
 > "Search Airbnb for 8-bedroom beach houses in Destin, FL for June 13-20, under $15k, and add the top 5"

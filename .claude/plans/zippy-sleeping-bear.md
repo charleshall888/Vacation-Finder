@@ -11,24 +11,32 @@
 
 ---
 
-## Data Strategy: Claude-Assisted
+## Data Strategy: Claude + Perplexity Search
 
-Instead of building fragile web scrapers, **Claude acts as the data fetcher**:
+Instead of building fragile web scrapers, **Claude fetches data using Perplexity MCP**:
 
 ```
 User: "Search for 8-bedroom beach houses in Destin FL for June 13-20"
   ↓
-Claude: Uses WebSearch to find Airbnb/VRBO listings
+Claude: perplexity_search("Airbnb 8 bedroom beach house Destin FL June 2026")
   ↓
-Claude: Extracts data (name, URL, price, bedrooms, reviews)
+Claude: Gets structured results (title, URL, snippet for each listing)
   ↓
-Claude: Calls POST /api/properties to save each property
+Claude: Extracts data and calls POST /api/properties for each
   ↓
 Frontend: Displays all properties with value scoring
 ```
 
+**Tools:**
+| Tool | Purpose |
+|------|---------|
+| `perplexity_search` | Find listings - returns titles, URLs, snippets (up to 20 results) |
+| `perplexity_ask` | Ask about beach areas, compare regions, get recommendations |
+| `WebFetch` | Fetch full property page for detailed extraction if needed |
+
 **Benefits:**
 - No fragile Python scrapers to maintain
+- Perplexity returns structured, ranked results
 - Claude handles anti-bot measures naturally
 - User controls exactly what gets added
 - Works immediately
@@ -490,6 +498,13 @@ curl -X POST http://localhost:8000/api/properties/ -H "Content-Type: application
 "Search Airbnb for 8-bedroom beach houses in Destin, FL
  for June 13-20, 2026, under $15k, and add the top 5 to my database"
 ```
+
+Claude will:
+1. Use `perplexity_search` to find matching listings
+2. Extract property data from results
+3. Use `WebFetch` if more details needed
+4. Call `POST /api/properties` for each property
+5. Confirm what was added
 
 ---
 
